@@ -30,73 +30,47 @@ public class TestCases {
      * instructions
      */
     @Test
-    public void testCase01() throws InterruptedException {
+    public void testCase01() {
 
-        wrappers = new Wrappers(driver);
-
-        System.out.println("Opening Flipkart : Start Test");
+        System.out.println("TestCase01 : Washing Machine Search");
 
         wrappers.openFlipkart("https://www.flipkart.com");
 
-        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
-        wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//span[contains(text(),'✕')]")));
         wrappers.closeLoginPopup();
 
         wrappers.searchProduct("Washing Machine");
 
-        Thread.sleep(4000);
-
         wrappers.sortByPopularity();
-
-        Thread.sleep(4000);
 
         wrappers.countItemsWithRatingLessThan4();
 
-        System.out.println("End Test");
     }
 
     @Test
-    public void testCase02() throws InterruptedException {
+    public void testCase02() {
 
-        wrappers = new Wrappers(driver);
-
-        System.out.println("Opening Flipkart : Start Test");
+        System.out.println("TestCase02 : iPhone Discount");
 
         wrappers.openFlipkart("https://www.flipkart.com");
-
-        Thread.sleep(4000);
 
         wrappers.searchProduct("iPhone");
 
-        Thread.sleep(4000);
-
         wrappers.printTitleAndDiscount();
-
-        System.out.println("End Test");
     }
 
+    
     @Test
-    public void testCase03() throws InterruptedException {
+    public void testCase03() {
 
-        wrappers = new Wrappers(driver);
-
-        System.out.println("Opening Flipkart : Start Test");
+        System.out.println("TestCase03 : Coffee Mug Review");
 
         wrappers.openFlipkart("https://www.flipkart.com");
 
-        Thread.sleep(4000);
-
         wrappers.searchProduct("Coffee Mug");
-
-        Thread.sleep(4000);
 
         wrappers.selectFourStarFilter();
 
-        Thread.sleep(6000);
-
         wrappers.printTopReviewedMugs();
-
-        System.out.println("End Test");
     }
 
     /*
@@ -124,6 +98,7 @@ public class TestCases {
 
         driver.manage().window().maximize();
         driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(10));
+        wrappers = new Wrappers(driver);
     }
 
     @AfterTest

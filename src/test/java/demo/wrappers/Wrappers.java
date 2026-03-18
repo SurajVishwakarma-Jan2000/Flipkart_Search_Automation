@@ -1,20 +1,22 @@
 package demo.wrappers;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.time.Duration;
+import java.util.*;
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
 public class Wrappers {
 
     ChromeDriver driver;
+    WebDriverWait wait;
 
     public Wrappers(ChromeDriver driver) {
         this.driver = driver;
+        this.wait = new WebDriverWait(driver, Duration.ofSeconds(10));
     }
 
     public void openFlipkart(String url) {
@@ -24,8 +26,10 @@ public class Wrappers {
     public void closeLoginPopup() {
 
         try {
+            WebElement closeBtn = wait.until(
+                    ExpectedConditions.elementToBeClickable(By.xpath("//span[contains(text(),'✕')]")));
 
-            driver.findElement(By.xpath("//span[contains(text(),'✕')]")).click();
+            closeBtn.click();
 
         } catch (Exception e) {
 
@@ -35,7 +39,9 @@ public class Wrappers {
 
     public void searchProduct(String product) {
 
-        WebElement searchBox = driver.findElement(By.name("q"));
+        WebElement searchBox = wait.until(
+                ExpectedConditions.visibilityOfElementLocated(By.name("q")));
+
         searchBox.clear();
         searchBox.sendKeys(product);
         searchBox.submit();
@@ -43,12 +49,17 @@ public class Wrappers {
 
     public void sortByPopularity() {
 
-        driver.findElement(By.xpath("//div[text()='Popularity']")).click();
+        WebElement sortBtn = wait.until(
+                ExpectedConditions.elementToBeClickable(By.xpath("//div[text()='Popularity']")));
+
+        sortBtn.click();
     }
 
     public void countItemsWithRatingLessThan4() {
 
-        List<WebElement> ratings = driver.findElements(By.xpath("//div[contains(@class,'MKiFS6')]"));
+        List<WebElement> ratings = wait.until(
+                ExpectedConditions.presenceOfAllElementsLocatedBy(
+                        By.xpath("//div[contains(@class,'MKiFS6')]")));
 
         int count = 0;
 
@@ -62,13 +73,11 @@ public class Wrappers {
                     count++;
                 }
 
-            } catch (Exception e) {
-
-                continue;
+            } catch (Exception ignored) {
             }
         }
 
-        System.out.println("Items with rating <=4 : " + count);
+        System.out.println("Items with rating <= 4 : " + count);
     }
 
     public void printTitleAndDiscount() {
@@ -95,24 +104,24 @@ public class Wrappers {
                     System.out.println("Discount : " + discountText);
                 }
 
-            } catch (Exception e) {
-
-                continue;
+            } catch (Exception ignored) {
             }
         }
     }
 
     public void selectFourStarFilter() {
 
-        driver.findElement(By.xpath("//div[text()='4★ & above']")).click();
+        WebElement filter = wait.until(
+                ExpectedConditions.elementToBeClickable(By.xpath("//div[text()='4★ & above']")));
+
+        filter.click();
     }
 
+    
     public void printTopReviewedMugs() {
 
         List<WebElement> titles = driver.findElements(By.xpath("//a[contains(@class,'pIpigb')]"));
-
         List<WebElement> reviews = driver.findElements(By.xpath("//span[contains(@class,'PvbNMB')]"));
-
         List<WebElement> images = driver.findElements(By.xpath("//img[contains(@class,'UCc1lI')]"));
 
         if (titles.isEmpty() || reviews.isEmpty()) {
@@ -132,15 +141,13 @@ public class Wrappers {
 
                 reviewMap.put(i, reviewCount);
 
-            } catch (Exception e) {
-
-                continue;
+            } catch (Exception ignored) {
             }
         }
 
         List<Map.Entry<Integer, Integer>> sorted = new ArrayList<>(reviewMap.entrySet());
 
-        sorted.sort((a, b) -> b.getValue() - a.getValue());
+        sorted.sort((a, b) -> b.getValue().compareTo(a.getValue()));
 
         int limit = Math.min(5, sorted.size());
 
@@ -148,10 +155,8 @@ public class Wrappers {
 
             int index = sorted.get(i).getKey();
 
-            System.out.println("Title: " + titles.get(index).getText());
-
-            System.out.println("Image URL: "
-                    + images.get(index).getAttribute("src"));
+            System.out.println("Title : " + titles.get(index).getText());
+            System.out.println("Image URL : " + images.get(index).getAttribute("src"));
         }
     }
 }
